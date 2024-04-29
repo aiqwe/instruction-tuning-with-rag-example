@@ -1,0 +1,11 @@
+selenium
+openai
+colorama
+datasets
+accelerate==0.27.2
+flash-attn
+peft
+trl
+transformers
+python-dotenv
+huggingface_hub
