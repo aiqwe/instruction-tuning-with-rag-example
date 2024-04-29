@@ -5,7 +5,8 @@ ChatGPT / Claude3를 이용하여 데이터셋을 만들어 Instruction Tuning�
 ### 이 자료는 아래 Reference를 참조하였습니다.
 + [Stanford Alpaca](https://github.com/tatsu-lab/stanford_alpaca)
 + [Prompt Engineering(deeplearning.ai)](https://www.deeplearning.ai/short-courses/chatgpt-prompt-engineering-for-developers)
-+ [Google Gemma](https://huggingface.co/google/gemma-2b-it)
++ [google/gemma-2b-it](https://huggingface.co/google/gemma-2b-it)
++ [intfloat/e5-base-v2](https://huggingface.co/intfloat/e5-base-v2)
 + [Openai API - Python](https://github.com/openai/openai-python)
 + [Flash Attention](https://github.com/Dao-AILab/flash-attention)
 + [네이버 API 가이드](https://developers.naver.com/docs/common/openapiguide/)
