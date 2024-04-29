@@ -7,6 +7,7 @@ ChatGPT / Claude3를 이용하여 데이터셋을 만들어 Instruction Tuning�
 + [Prompt Engineering(deeplearning.ai)](https://www.deeplearning.ai/short-courses/chatgpt-prompt-engineering-for-developers)
 + [google/gemma-2b-it](https://huggingface.co/google/gemma-2b-it)
 + [intfloat/e5-base-v2](https://huggingface.co/intfloat/e5-base-v2)
++ [Fine-Tuning Gemma Models in Hugging Face](https://huggingface.co/blog/gemma-peft)
 + [Openai API - Python](https://github.com/openai/openai-python)
 + [Flash Attention](https://github.com/Dao-AILab/flash-attention)
 + [네이버 API 가이드](https://developers.naver.com/docs/common/openapiguide/)
