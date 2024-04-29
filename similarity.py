@@ -7,11 +7,21 @@ from multiprocessing import Pool, cpu_count
 from functools import partial
 
 def average_pool(
-    model: transformers.PreTrainedModel,
-    tokenizer: transformers.PreTrainedTokenizer,
-    input_text: Union[List[str], str]):
-    """Sequence의 Average Pool로 Embedding 값을 계산합니다."""
-        
+        model: transformers.PreTrainedModel,
+        tokenizer: transformers.PreTrainedTokenizer,
+        input_text: Union[List[str], str]
+) -> torch.Tensor:
+    """Sequence의 Average Pool로 Embedding 값을 계산합니다.
+
+    Args:
+        model: 엠베딩을 수행할 인코더 모델
+        tokenizer: 모델의 토크나이저
+        input_text: Sequence
+
+    Returns: 임베딩 텐서
+
+    """
+
     inputs = tokenizer(
         input_text,
         max_length=tokenizer.model_max_length,
@@ -19,7 +29,7 @@ def average_pool(
         truncation=True,
         return_tensors="pt"
     ).to(model.device)
-    
+
     output = model(**inputs)
     last_hidden = output.last_hidden_state.masked_fill(~inputs['attention_mask'][..., None].bool(), 0.0)
     embeddings = (last_hidden.sum(dim=1) / inputs['attention_mask'].sum(dim=1)[..., None]).to("cpu")
@@ -27,22 +37,39 @@ def average_pool(
     return embeddings
 
 def cosine_similarity(
-    input1: torch.Tensor,
-    input2: Union[List[torch.Tensor], torch.Tensor]):
-    """input1과 input2의 코사인 유사도를 계산합니다."""
+        input1: torch.Tensor,
+        input2: Union[List[torch.Tensor], torch.Tensor]
+) -> List:
+    """input1과 input2의 코사인 유사도를 계산합니다.
+
+    Args:
+        input1: 코사인 유사도를 계산할 텐서값
+        input2: input1과 코사인 유사도를 계산할 텐서 또는 텐서 리스트
+
+    Returns: 코사인 유사도 리스트 객체
+
+    """
     if isinstance(input2, list):
         with Pool(cpu_count()) as p:
             scores = p.map(partial(F.cosine_similarity, x1=input1), input2)
-    else:            
+    else:
         scores = F.cosine_similarity(x1=input1, x2=input2)
-        
+
     return scores.tolist()
 
 def sort_by_iterable(target: Iterable, key_iter: Iterable):
-    """ key_iter의 내림차순을 기준으로 key, target을 함께 정렬합니다."""
+    """ key_iter의 내림차순을 기준으로 key, target을 함께 정렬합니다.
+
+    Args:
+        target: 정렬하려는 타겟 이터러블 객체
+        key_iter: 정렬의 기준이 되는 이터러벌 객체
+
+    Returns: key_iter의 오름차순에 따라 정렬된 target, key_iter
+
+    """
     pairs = sorted(zip(target, key_iter), key = lambda x: x[1], reverse=True)
     target, key_iter = zip(*pairs)
     target = list(target)
     key_iter = list(key_iter)
-    
+
     return target, key_iter

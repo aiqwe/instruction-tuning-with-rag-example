@@ -1,3 +1,5 @@
+#!/bin/bash
+
 echo -e "\033[032m 🚀 requirements.txt를 설치합니다 \033[0m"
 pip install selenium openai colorama datasets accelerate==0.27.2 flash-attn peft trl transformers python-dotenv huggingface_hub
 
@@ -28,5 +30,5 @@ echo -e "\032[033m 🚀 gpt_with_tuning Repo에서 클론합니다. \033[0m"
 git clone git@github.com:aiqwe/gpt_with_tuning.git
 
 echo -e "\032[033m 🚀 원활한 import를 위해 PYTHONPATH 환경변수를 추가합니다. \033[0m"
-export PYTHONPATH=$PYTHONPATH;/content/gpt_with_tuning/tuning
+export PYTHONPATH=$PYTHONPATH;$PWD
 

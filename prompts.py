@@ -36,3 +36,9 @@ GEMMA_TRAINING_PROMPT = """<bos><start_of_turn>user
 <start_of_turn>model
 {answer}
 """
+
+GEMMA_PROMPT = """
+<bos><start_of_turn>user
+{question}<end_of_turn>
+<start_of_turn>model
+"""
