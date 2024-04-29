@@ -10,6 +10,9 @@ ChatGPT / Claude3를 이용하여 데이터셋을 만들어 Instruction Tuning�
 + [Flash Attention](https://github.com/Dao-AILab/flash-attention)
 + [네이버 API 가이드](https://developers.naver.com/docs/common/openapiguide/)
 
+### Huggingface의 모델은 아래 링크를 참조해주세요.
++ [https://huggingface.co/aiqwe/gemma-2b-it-sgtuned](https://huggingface.co/aiqwe/gemma-2b-it-sgtuned)
+
 ### 각 파일들의 역할은 다음과 같습니다.
 |구분|파일명|역할|
 |-|-|-|
