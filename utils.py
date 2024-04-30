@@ -2,15 +2,18 @@ import json
 import time
 import random
 import os
-from typing import Any, List, Mapping
+import requests
+from typing import Any, List, Mapping, Literal
 from openai import OpenAI
 from dotenv import load_dotenv, find_dotenv
 from tqdm import tqdm
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
+import transformers
 
 import similarity
+import prompts
 
 
 def _getenv(key):
@@ -34,7 +37,7 @@ def jload(file: str) -> List | str:
             return json.load(f)
 
 # JSON파일로 저장하기
-def jsave(data:Any, file: str) -> None:
+def jsave(data:Any, file: str, indent: int=None) -> None:
     """ json 파일로 저장합니다.
 
     Args:
@@ -45,7 +48,7 @@ def jsave(data:Any, file: str) -> None:
 
     """
     with open(file, "a") as f:
-        json.dump(data, f, ensure_ascii=False)
+        json.dump(obj=data, fp=f, ensure_ascii=False, indent=indent)
 
 # OpenAI API 함수
 def get_completion(prompt: str, model="gpt-3.5-turbo", api_key: str = None) -> str:
@@ -79,6 +82,7 @@ def get_completion(prompt: str, model="gpt-3.5-turbo", api_key: str = None) -> s
 def get_document_through_selenium(
         webdriver_path:str = None,
         inputs:List[str] = None,
+        n_documents: int = 7,
         save_path:str = None
 ) -> List[dict]:
     """ Selenium을 통하여 특정 메세지를 검색하고, 결과로 출력되는 네이버 인기글 텍스트 데이터를 수집합니다.
@@ -108,12 +112,12 @@ def get_document_through_selenium(
         # 인기글의 제목
         title_link = driver.find_elements(By.CLASS_NAME, "title_link")
         title = [t.text for t in title_link]
-        title = title[:5]
+        title = title[:n_documents]
 
         # 인기글의 텍스트 내용
         dsc_link = driver.find_elements(By.CLASS_NAME, "dsc_link")
         document = [t.text for t in dsc_link]
-        document = document[:5]
+        document = document[:n_documents]
 
         search_data.append(dict(question=question, document=document))
         # Blocking을 막기위해 sleep 시간을 랜덤하게 설정
@@ -195,7 +199,7 @@ def generate(
         temperature: float = 0.5,
         max_new_tokens = 256,
         rag: bool=False,
-        **rag_config
+        rag_config:Mapping = None
 ) -> str:
     """ 모델의 generate함수입니다.
 
@@ -211,13 +215,14 @@ def generate(
     """
 
     if rag:
-        documents = utils.get_document_through_api(query, **rag_config)
+        documents = get_document_through_api(query, **rag_config)
+        documents = [content['description'] for content in documents['items']]
         documents = similarity.sort_by_similarity(query, documents)
         documents = "\n".join(documents[:3])
         query = query +"\n아래 documents를 참조하여 답변하세요\n" + documents
 
     prompt = prompts.GEMMA_PROMPT.format(question=query)
-    inputs = tokenizer.encode(query, add_special_tokens=False, return_tensors="pt").to(model.device)
+    inputs = tokenizer(prompt, add_special_tokens=False, return_tensors="pt").to(model.device)
     outputs = model.generate(
         **inputs,
         repetition_penalty=repetition_penalty,

@@ -96,29 +96,10 @@ def sort_by_similarity(
     tokenizer = AutoTokenizer.from_pretrained(model_id)
     model = AutoModel.from_pretrained(model_id, device_map=model_device)
 
-    x1 = tokenizer(
-        query,
-        max_length=tokenizer.model_max_length,
-        padding=True,
-        truncation=True,
-        return_tensors="pt"
-    )
+    x1 = average_pool(model, tokenizer, query)
+    x2 = average_pool(model, tokenizer, documents)
 
-    x2 = tokenizer(
-        documents,
-        max_length=tokenizer.model_max_length,
-        padding=True,
-        truncation=True,
-        return_tensors="pt"
-    )
-
-    x1_output = model(**x1)
-    x2_output = model(**x2)
-
-    x1 = similarity.average_pool(model, tokenizer, query)
-    x2 = similarity.average_pool(model, tokenizer, documents)
-
-    scores = similarity.cosine_similarity(x1, x2)
-    documents, scores = similarity.sort_by_other_iterable(target=documents, key_iter=scores)
+    scores = cosine_similarity(x1, x2)
+    documents, scores = sort_by_iterable(target=documents, key_iter=scores)
 
     return documents
