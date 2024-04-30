@@ -73,3 +73,52 @@ def sort_by_iterable(target: Iterable, key_iter: Iterable):
     key_iter = list(key_iter)
 
     return target, key_iter
+
+def sort_by_similarity(
+        query: str,
+        documents: List[str],
+        device: str = "cpu"
+) -> List:
+    """ query와 document의 코사인 유사도를 계산한 뒤, 높은 점수대로 document를 반환하는 함수입니다.
+
+    Args:
+        query: 코사인 유사도로 계산할 쿼리
+        documents: 코사인 유사도로 계산할 document
+
+    Returns: 코사인 유사도가 높은 순서대로 document 반환
+
+    """
+
+    from transformers import AutoTokenizer, AutoModel
+
+    model_id = "intfloat/e5-base-v2"
+    model_device = device
+    tokenizer = AutoTokenizer.from_pretrained(model_id)
+    model = AutoModel.from_pretrained(model_id, device_map=model_device)
+
+    x1 = tokenizer(
+        query,
+        max_length=tokenizer.model_max_length,
+        padding=True,
+        truncation=True,
+        return_tensors="pt"
+    )
+
+    x2 = tokenizer(
+        documents,
+        max_length=tokenizer.model_max_length,
+        padding=True,
+        truncation=True,
+        return_tensors="pt"
+    )
+
+    x1_output = model(**x1)
+    x2_output = model(**x2)
+
+    x1 = similarity.average_pool(model, tokenizer, query)
+    x2 = similarity.average_pool(model, tokenizer, documents)
+
+    scores = similarity.cosine_similarity(x1, x2)
+    documents, scores = similarity.sort_by_other_iterable(target=documents, key_iter=scores)
+
+    return documents

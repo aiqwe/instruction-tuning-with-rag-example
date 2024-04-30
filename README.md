@@ -29,15 +29,14 @@ ChatGPT / Claude3를 이용하여 데이터셋을 만들어 Instruction Tuning�
 ---
 
 ### 각 파일들의 역할은 다음과 같습니다.
-|구분|파일명|역할|
-|-|-|-|
-|노트북|[preprocess.ipynb](preprocess.ipynb)|데이터셋을 만드는 노트북 예제|
-|노트북|[train.ipynb](train.ipynb)|학습 코드 예제|
-|데이터|[data/seed_words.txt](data/seed_words.txt)|학습하려는 도메인의 키워드 모음|
-|데이터|[data/query.jsonl](data/query.jsonl)|키워드기반으로 생성한 질문리스트|
-|데이터|[data/search_data.json](data/search_data.json)|질문리스트로 검색한 네이버 인기글 모음|
-|데이터|[data/instruction.jsonl](data/instruction.jsonl)|검색데이터와 질문리스트로 생성한 Instruction 데이터셋|
-|모듈|[utils.py](utils.py)|json읽기, OpenAI API등 유틸기능|
-|모듈|[similarity.py](similarity.py)|RAG에서 사용할 데이터를 랭킹 작업해주는 기능 모음|
-|모듈|[prompts.py](prompts.py)|프롬프트 모음|
-|모듈|[generate.py](generate.py)|모델의 답변 기능|
+|구분|파일명| 역할                                     |
+|-|-|----------------------------------------|
+|노트북|[preprocess.ipynb](preprocess.ipynb)| 데이터셋을 만드는 노트북 예제                       |
+|노트북|[train.ipynb](train.ipynb)| 학습 코드 예제                               |
+|데이터|[data/seed_words.txt](data/seed_words.txt)| 학습하려는 도메인의 키워드 모음                      |
+|데이터|[data/query.jsonl](data/query.jsonl)| 키워드기반으로 생성한 질문리스트                      |
+|데이터|[data/search_data.json](data/search_data.json)| 질문리스트로 검색한 네이버 인기글 모음                  |
+|데이터|[data/instruction.jsonl](data/instruction.jsonl)| 검색데이터와 질문리스트로 생성한 Instruction 데이터셋     |
+|모듈|[utils.py](utils.py)| json읽기, OpenAI API, generate등 각종 도움 기능 |
+|모듈|[similarity.py](similarity.py)| RAG에서 사용할 데이터를 랭킹 작업해주는 기능 모음          |
+|모듈|[prompts.py](prompts.py)| 프롬프트 모음                                |
