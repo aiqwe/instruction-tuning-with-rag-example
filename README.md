@@ -6,6 +6,9 @@
 
 ChatGPT를 활용하여 혼자서도 데이터 셋을 만들어볼 수 있으며, LoRA를 이용하여 작은 GPU에서도 학습을 실험해볼 수 있습니다.
 
+<br>
+<br>
+
 # 목차
 [개요](#개요)  
 [훈련 스펙](#훈련-스펙)  
@@ -13,6 +16,8 @@ ChatGPT를 활용하여 혼자서도 데이터 셋을 만들어볼 수 있으며
 [참조 문서](#참조-문서)  
 [Colab 실행 가이드](#Colab-실행-가이드)  
 
+<br>
+<br>
 
 # 개요
 본 예제는  
@@ -27,6 +32,9 @@ ChatGPT를 활용하여 혼자서도 데이터 셋을 만들어볼 수 있으며
   
 [train.ipynb](train.ipynb)  
 훈련 데이터셋을 PEFT로 학습시켜 모델을 튜닝합니다. 데이터셋을 `SFTTrainer`에 전달하기 위해 데이터셋을 마스킹하고 배치작업을 위한 패딩, `Dataset` 생성 등 학습을 위한 작업코드들이 포함되어 있습니다.
+
+<br>
+<br>
 
 # 훈련 스펙
 학습은 쉽게 실험해 볼 수 있도록 [Google Colab](https://colab.google/)을 사용했으며, 훈련시 확인된 스펙은 아래와 같았습니다.
@@ -45,6 +53,9 @@ ChatGPT를 활용하여 혼자서도 데이터 셋을 만들어볼 수 있으며
 
 Colab에서 A100은 자주 연결이 끊어지기 때문에 안정적인 L4 GPU로 훈련하였습니다.  
 
+<br>
+<br>
+
 # 코드 트리
 각 파일들은 아래의 역할을 수행합니다.
 
@@ -60,6 +71,9 @@ Colab에서 A100은 자주 연결이 끊어지기 때문에 안정적인 L4 GPU�
 |모듈|[similarity.py](similarity.py)| RAG에서 사용할 데이터를 랭킹 작업해주는 기능 모음          |
 |모듈|[prompts.py](prompts.py)| 프롬프트 모음                                |
 
+<br>
+<br>
+
 # 참조 문서
 본 예제는 아래 문서들을 참조하였습니다.
 + [Stanford Alpaca](https://github.com/tatsu-lab/stanford_alpaca)
@@ -73,6 +87,9 @@ Colab에서 A100은 자주 연결이 끊어지기 때문에 안정적인 L4 GPU�
 
 예제의 모델은 아래 링크를 참조해주세요.  
 + [https://huggingface.co/aiqwe/gemma-2b-it-sgtuned](https://huggingface.co/aiqwe/gemma-2b-it-sgtuned)
+
+<br>
+<br>
 
 # Colab 실행 가이드
 Colab에서 실행해볼 수 있는 다양한 방법이 있겠지만, 아래 방법으로 조금더 쉽게 Colab에서 실행해볼 수 있습니다.
