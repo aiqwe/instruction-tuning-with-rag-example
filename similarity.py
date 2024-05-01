@@ -11,14 +11,14 @@ def average_pool(
         tokenizer: transformers.PreTrainedTokenizer,
         input_text: Union[List[str], str]
 ) -> torch.Tensor:
-    """Sequence의 Average Pool로 Embedding 값을 계산합니다.
+    """Input으로 받는 문장 내 여러 토큰들을 Average Pool을 사용해서 하나의 임베딩 값으로 변환해줍니다..
 
     Args:
-        model: 엠베딩을 수행할 인코더 모델
+        model: 임베딩을 수행할 모델
         tokenizer: 모델의 토크나이저
-        input_text: Sequence
+        input_text: 임베딩될 문장 또는 문장의 리스트
 
-    Returns: 임베딩 텐서
+    Returns: Average Pool된 임베딩 텐서
 
     """
 
@@ -46,7 +46,7 @@ def cosine_similarity(
         input1: 코사인 유사도를 계산할 텐서값
         input2: input1과 코사인 유사도를 계산할 텐서 또는 텐서 리스트
 
-    Returns: 코사인 유사도 리스트 객체
+    Returns: 코사인 유사도 값 리스트
 
     """
     if isinstance(input2, list):
@@ -58,7 +58,8 @@ def cosine_similarity(
     return scores.tolist()
 
 def sort_by_iterable(target: Iterable, key_iter: Iterable):
-    """ key_iter의 내림차순을 기준으로 key, target을 함께 정렬합니다.
+    """ key_iter의 내림차순을 기준으로 key_iter, key_iter와 맵핑되는 target을 함께 정렬합니다.
+    각각의 document에 대하 유사도 값이 있을 때, 유사도 값을 기준으로 document를 정렬하는데 사용됩니다.
 
     Args:
         target: 정렬하려는 타겟 이터러블 객체
@@ -79,7 +80,7 @@ def sort_by_similarity(
         documents: List[str],
         device: str = "cpu"
 ) -> List:
-    """ query와 document의 코사인 유사도를 계산한 뒤, 높은 점수대로 document를 반환하는 함수입니다.
+    """ query와 document의 코사인 유사도를 계산한 뒤, 높은 점수대로 document와 유사도를 반환하는 함수입니다.
 
     Args:
         query: 코사인 유사도로 계산할 쿼리

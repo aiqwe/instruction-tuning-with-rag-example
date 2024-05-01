@@ -117,7 +117,15 @@ Colab에서 실행해볼 수 있는 다양한 방법이 있겠지만, 아래 방
 왼쪽 세로 네게이션 바를 보면 위 사진과 같이 열쇠 그림이 있습니다. 여기서 Secret을 설정할 수 있습니다.  
 사진처럼 오른쪽 상단 빨간색 박스 안에는 사용하고 있는 GPU가 표시됩니다. 여기서 L4 또는 A100을 사용합니다.  
 예제 코드는 `torch.bfloat16` 타입을 사용하기 때문에 Ampere 7 이전의 GPU에서는 지원되지 않습니다.  
-+ Secret을 설정하는 방법은 [여기](https://medium.com/@parthdasawant/how-to-use-secrets-in-google-colab-450c38e3ec75)를 참조해 주세요.  
++ Secret을 설정하는 방법은 [여기](https://medium.com/@parthdasawant/how-to-use-secrets-in-google-colab-450c38e3ec75)를 참조해 주세요.
++ `utils.py`의 함수들은 아래처럼 `.env` 파일을 만들면 자동으로 환경변수를 만들고 읽습니다.
+```bash
+# .env 파일
+OPENAI_API_KEY=발급받은KEY
+NAVER_API_ID=발급받은ID
+NAVER_API_SECRET=발급받은SECRET
+```
++ `train.ipynb` 파일의 huggingface토큰은 함수 인자에 직접 입력하거나 Colab Secret을 활용해주세요.
 
 <br>
 <br>

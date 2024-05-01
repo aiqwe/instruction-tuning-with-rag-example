@@ -16,3 +16,6 @@ __pycache__/
 
 # dotenv
 **/.env
+
+# chromedriver
+chromedriver

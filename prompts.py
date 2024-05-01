@@ -1,11 +1,13 @@
+# seed_words.txt에서 질문리스트를 만들때 사용하는 접두어 프롬프트
 SEED_WORD_PROMPT_PREFIX = """주어진 seed_word에 대해 궁금해할 질문을 10개를 생성하세요.
 만들어낸 질문은 JSON형식을 따라야 합니다.
 Indentation은 없도록 출력하세요.
 아래 양식으로 출력하세요:
 """
-
+# seed_words.txt에서 질문리스트를 만들때 사용하는 본문 프롬프트
 SEED_WORD_PROMPT_CONTENT = """{{"seed_word": "{seed_word}", "answer": ["1번째 질문", "2번째 질문"... , "10번째 질문"]}}"""
 
+# Training Set을 만들때 사용하는 접두어 프롬프트
 INSTRUCTION_PROMPT_PREFIX = """요청받은 question을 document를 참조하여 answer로 답변하세요.
 question 1개당 여러개의 document가 주어지며, question은 10개씩 전달됩니다.
 
@@ -22,6 +24,7 @@ Indentation은 없도록 출력하세요.
 {'question': '전달 받은 question의 내용', 'answer': '답변 내용'}
 """
 
+# Training Set을 만들때 사용하는 프롬프트 본문
 INSTRUCTION_PROMPT_CONTENT = """
 ###question:
 {question}
@@ -29,6 +32,7 @@ INSTRUCTION_PROMPT_CONTENT = """
 {document}
 """
 
+# Gemma 모델을 학습할 때 사용하는 프롬프트
 GEMMA_TRAINING_PROMPT = """<bos><start_of_turn>user
 아래는 작업을 설명하는 명령어와 추가 컨텍스트를 제공하는 입력이 짝을 이루는 예제입니다.
 요청을 적절히 완료하는 응답을 작성해주세요.
@@ -37,6 +41,7 @@ GEMMA_TRAINING_PROMPT = """<bos><start_of_turn>user
 {answer}
 """
 
+# Gemma 기본 모델, Fine-tuned 모델에서 인퍼런스를 할때 사용하는 프롬프트
 GEMMA_PROMPT = """
 <bos><start_of_turn>user
 {question}<end_of_turn>

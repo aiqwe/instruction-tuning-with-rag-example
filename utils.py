@@ -17,6 +17,7 @@ import prompts
 
 
 def _getenv(key):
+    """ 환경변수를 찾는 함수입니다. .env """
     load_dotenv(find_dotenv())
     return os.getenv(key)
 
@@ -59,7 +60,7 @@ def get_completion(prompt: str, model="gpt-3.5-turbo", api_key: str = None) -> s
         prompt: ChatGPT에 전송하려는 프롬프트
         model: ChatGPT 모델명
 
-    Returns: ChatGPT의 답변 데이터
+    Returns: ChatGPT response중 답변 텍스트 데이터
 
     """
 
@@ -93,7 +94,7 @@ def get_document_through_selenium(
         inputs: 검색할 쿼리
         save_path: 수집한 텍스트를 저장할 위치
 
-    Returns: 수집한 데이터
+    Returns: [{'question': 검색어, 'title': 인기글 제목, 'document': 인기글 요약 내용}]의 리스트 형태로 수집 데이터를 저장
 
     """
 
@@ -167,7 +168,7 @@ def get_document_through_api(
           - 'sim': 정확도 순으로 내림차순 정렬
           - 'date': 날짜 순으로 내림차순 정렬
 
-    Returns:
+    Returns: API로부터 제공받은 검색 결과 response값
 
     """
 
@@ -210,8 +211,11 @@ def generate(
         model: generate할 모델
         tokenizer: 모델의 토크나이저
         query: user가 전송하는 쿼리값
+        repetition_penalty:
+        temperature:
+        max_new_tokens:
         rag: 네이버 검색 API를 활용한 RAG 사용 여부
-        **kwargs: 네이버 검색 API에 전달될 추가 인수
+        rag_config: 네이버 검색 API에 전달될 추가 설정값
 
     Returns: 모델이 답변하는 텍스트
 
