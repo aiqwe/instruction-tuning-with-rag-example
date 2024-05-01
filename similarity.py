@@ -102,4 +102,4 @@ def sort_by_similarity(
     scores = cosine_similarity(x1, x2)
     documents, scores = sort_by_iterable(target=documents, key_iter=scores)
 
-    return documents
+    return documents, scores

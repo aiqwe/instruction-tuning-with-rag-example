@@ -3,7 +3,7 @@ import time
 import random
 import os
 import requests
-from typing import Any, List, Mapping, Literal
+from typing import Any, List, Mapping, Literal, Union
 from openai import OpenAI
 from dotenv import load_dotenv, find_dotenv
 from tqdm import tqdm
@@ -81,9 +81,10 @@ def get_completion(prompt: str, model="gpt-3.5-turbo", api_key: str = None) -> s
 
 def get_document_through_selenium(
         webdriver_path:str = None,
-        inputs:List[str] = None,
+        inputs:Union[List[str], str] = None,
         n_documents: int = 7,
-        save_path:str = None
+        save_path:str = None,
+        indent: int = 4
 ) -> List[dict]:
     """ Selenium을 통하여 특정 메세지를 검색하고, 결과로 출력되는 네이버 인기글 텍스트 데이터를 수집합니다.
 
@@ -98,6 +99,8 @@ def get_document_through_selenium(
 
     if not inputs:
         raise ValueError('You should pass "inputs" argument.')
+    if isinstance(inputs, str):
+        inputs = list(str)
 
     driver = webdriver.Chrome(webdriver_path)
     url = 'https://www.naver.com'
@@ -127,7 +130,7 @@ def get_document_through_selenium(
         search.clear()
 
     if save_path:
-        jsave(search_data, save_path)
+        jsave(search_data, save_path, indent=indent)
 
     return search_data
 
@@ -217,7 +220,7 @@ def generate(
     if rag:
         documents = get_document_through_api(query, **rag_config)
         documents = [content['description'] for content in documents['items']]
-        documents = similarity.sort_by_similarity(query, documents)
+        documents, _ = similarity.sort_by_similarity(query, documents)
         documents = "\n".join(documents[:3])
         query = query +"\n아래 documents를 참조하여 답변하세요\n" + documents
 
