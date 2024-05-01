@@ -217,7 +217,13 @@ def generate(
 
     """
 
-    if rag:
+    if (rag and not rag_config):
+        raise ValueError(
+            "If you want to use RAG, pass 'rag_config' with 'api_client_id' and 'api_client_secret'"
+            "example)"
+            "rag_config={'api_client_id'}: 'your_client_id', 'api_client_scret': 'your_client_secret'"
+        )
+    if (rag and rag_config):
         documents = get_document_through_api(query, **rag_config)
         documents = [content['description'] for content in documents['items']]
         documents, _ = similarity.sort_by_similarity(query, documents)
