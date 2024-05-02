@@ -118,14 +118,12 @@ Colab에서 실행해볼 수 있는 다양한 방법이 있겠지만, 아래 방
 사진처럼 오른쪽 상단 빨간색 박스 안에는 사용하고 있는 GPU가 표시됩니다. 여기서 L4 또는 A100을 사용합니다.  
 예제 코드는 `torch.bfloat16` 타입을 사용하기 때문에 Ampere 7 이전의 GPU에서는 지원되지 않습니다.  
 + Secret을 설정하는 방법은 [여기](https://medium.com/@parthdasawant/how-to-use-secrets-in-google-colab-450c38e3ec75)를 참조해 주세요.
-+ `utils.py`의 함수들은 아래처럼 `.env` 파일을 만들면 자동으로 환경변수를 만들고 읽습니다.
++ `utils.py`의 함수들은 아래처럼 `.env` 파일을 만들면 자동으로 환경변수를 읽습니다.(또는 시스템 환경변수를 읽습니다.)
 ```bash
 # .env 파일
 OPENAI_API_KEY=발급받은KEY
-NAVER_API_ID=발급받은ID
-NAVER_API_SECRET=발급받은SECRET
 ```
-+ `train.ipynb` 파일의 huggingface토큰은 함수 인자에 직접 입력하거나 Colab Secret을 활용해주세요.
++ `train.ipynb` 파일의 huggingface토큰은 함수 인자에 직접 입력하거나 Colab Secret을 활용해주세요.(Colab을 가정하기 때문에 환경변수로 읽지 않습니다.)
 
 <br>
 <br>
@@ -142,7 +140,4 @@ NAVER_API_SECRET=발급받은SECRET
 + `train.ipynb` 에서 huggingface 토큰을 지정해야합니다.  
 Gemma 모델을 로드하기 위해서는 huggingface의 gemma 모델 사용 신청을 하고, huggingface 토큰을 발급받아야 합니다.  
 토큰 발급은 huggingface의 [User Access Tokens](https://huggingface.co/docs/hub/security-tokens)를 참조하세요.  
-
-+ Naver 검색 API를 RAG로 사용하기 위해서는 Client ID와 Client Secret을 발급받아야 합니다.  
-[네이버 검색 API 공식문서](https://developers.naver.com/docs/common/openapiguide/apilist.md#%EB%B9%84%EB%A1%9C%EA%B7%B8%EC%9D%B8-%EB%B0%A9%EC%8B%9D-%EC%98%A4%ED%94%88-api)를 확인해주세요.  
 
