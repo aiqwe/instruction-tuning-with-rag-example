@@ -3,6 +3,8 @@ import time
 import random
 import os
 import requests
+from multiprocessing import Pool, cpu_count
+from functools import partial
 from typing import Any, List, Mapping, Literal, Union
 from openai import OpenAI
 from dotenv import load_dotenv, find_dotenv
@@ -12,7 +14,6 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
 import transformers
-
 import similarity
 import prompts
 
@@ -70,6 +71,7 @@ def get_completion(prompt: str, model="gpt-3.5-turbo", api_key: str = None) -> s
     if not api_key:
         raise ValueError("OpenAI api key is not setted.")
 
+    client = OpenAI(api_key=api_key)
     messages = [{"role": "user", "content": prompt}]
     response = client.chat.completions.create(
         model=model,
@@ -79,7 +81,6 @@ def get_completion(prompt: str, model="gpt-3.5-turbo", api_key: str = None) -> s
     client.close()
 
     return response.choices[0].message.content
-
 
 def get_document_through_selenium(
         inputs:Union[List[str], str] = None,
@@ -104,35 +105,33 @@ def get_document_through_selenium(
     if isinstance(inputs, str):
         inputs = [inputs]
 
-    # 브라우저없이 크롤링
-    options = Options()
-    options.add_argument('--headless')
-    driver = webdriver.Chrome(options=options)
-    url = 'https://www.naver.com'
-    driver.get(url)
-    search = driver.find_element("id", "query")
-
-    search_data = []
-    for question in tqdm(inputs):
-        search.send_keys(question)
-        search.send_keys(Keys.ENTER)
-
-        # 인기글의 텍스트 내용
-        dsc_link = driver.find_elements(By.CLASS_NAME, "dsc_link")
-        document = [t.text for t in dsc_link]
-        document = document[:n_documents]
-
-        search_data.append(dict(question=question, document=document))
-        # Blocking을 막기위해 sleep 시간을 랜덤하게 설정
-        time.sleep(random.choice(range(20)))
-        # 다시 검색하기
-        search = driver.find_element("id", "nx_query")
-        search.clear()
+    with Pool(cpu_count()) as pool:
+        search_data = list(tqdm(pool.imap(partial(_get_document_through_selenium, n_documents=n_documents), inputs)))
 
     if save_path:
         jsave(search_data, save_path, indent=indent)
 
     return search_data
+
+def _get_document_through_selenium(question, n_documents):
+    options = Options()
+    options.add_argument('--headless')
+    driver = webdriver.Chrome(options=options)
+
+    url = 'https://www.naver.com'
+    driver.get(url)
+    search = driver.find_element("id", "query")
+
+    search.send_keys(question)
+    search.send_keys(Keys.ENTER)
+
+    # 인기글의 텍스트 내용
+    dsc_link = driver.find_elements(By.CLASS_NAME, "dsc_link")
+    document = [t.text for t in dsc_link]
+    document = document[:n_documents]
+    driver.close()
+
+    return dict(question=question, document=document)
 
 def generate(
         model: transformers.PreTrainedModel,
