@@ -200,55 +200,6 @@ def generate(
         repetition_penalty: float = 1.5,
         temperature: float = 0.5,
         max_new_tokens = 256,
-        rag: bool=True,
-        n_documents: int = 5
-) -> str:
-    """ 모델의 generate함수입니다.
-
-    Args:
-        model: generate할 모델
-        tokenizer: 모델의 토크나이저
-        query: user가 전송하는 쿼리값
-        repetition_penalty:
-        temperature:
-        max_new_tokens:
-        rag: 네이버 검색 API를 활용한 RAG 사용 여부
-        n_documents: RAG 사용시 검색 및 참조할 인기글의 갯수
-
-    Returns: 모델이 답변하는 텍스트
-
-    """
-
-    if rag:
-        search_data = get_document_through_selenium(inputs=query, n_documents=n_documents, save_path=False)
-        documents = list(map(lambda x: x['document'], search_data))
-        documents, scores = similarity.sort_by_similarity(query, documents)
-        documents = [d for d, s in zip(documents, scores) if s >= 0.9] # Cosine Similarity가 0.9 이상인 문서만 수집
-        documents = "\n".join(documents)
-        query = query +(
-            "\n아래 documents를 참조하여 답변하세요. 먼저 제공되는 documents를 더 많이 참조하세요\n"
-            "documents:\n"
-        ) + documents
-
-    prompt = prompts.GEMMA_PROMPT.format(question=query)
-    inputs = tokenizer(prompt, add_special_tokens=False, return_tensors="pt").to(model.device)
-    outputs = model.generate(
-        **inputs,
-        repetition_penalty=repetition_penalty,
-        temperature=temperature,
-        max_new_tokens=max_new_tokens
-    )
-    completion = tokenizer.decode(outputs[0])
-
-    return completion
-
-def generate(
-        model: transformers.PreTrainedModel,
-        tokenizer: transformers.PreTrainedTokenizer,
-        query: str,
-        repetition_penalty: float = 1.5,
-        temperature: float = 0.5,
-        max_new_tokens = 256,
         rag: bool=False,
         rag_config:Mapping = None
 ) -> str:
@@ -263,6 +214,9 @@ def generate(
         max_new_tokens:
         rag: 네이버 검색 API를 활용한 RAG 사용 여부
         rag_config: 네이버 검색 API에 전달될 추가 설정값
+          - api_client_id: 네이버 검색 API의 CLIENT_ID
+          - api_client_secret: 네이버 검색 API의 SECRET
+          - score: 검색 결과를 필터링할 유사도 점수 기준값
 
     Returns: 모델이 답변하는 텍스트
 
@@ -275,15 +229,22 @@ def generate(
             "rag_config={'api_client_id'}: 'your_client_id', 'api_client_scret': 'your_client_secret'"
         )
     if (rag and rag_config):
-        documents = get_document_through_api(query, **rag_config)
-        documents = [content['description'] for content in documents['items']]
-        documents, scores = similarity.sort_by_similarity(query, documents)
-        documents = [d for d, s in zip(documents, scores) if s >= 0.9]  # Cosine Similarity가 0.9 이상인 문서만 수집
-        documents = "\n".join(documents[:3])
-        query = query +(
-            "\n아래 documents를 참조하여 답변하세요. 먼저 제공되는 documents를 더 많이 참조하세요\n"
-            "documents:\n"
-        ) + documents
+        categories = ["blog", "news", "kin", "encyc", "cafearticle", "webkr"]
+        documents = []
+        for category in categories:
+            search_docs = get_document_through_api(query, category=category, **rag_config)
+            search_docs = [content['description'] for content in search_docs['items']]
+            search_docs = [docs.replace("<b>", "").replace("</b>", "") for docs in search_docs]
+            if not len(search_docs) == 0:
+                search_docs, scores = similarity.sort_by_similarity(query, search_docs)
+                search_docs = [d for d, s in zip(search_docs, scores) if s >= 0.9]  # Cosine Similarity가 0.9 이상인 문서만 수집
+            documents = documents + search_docs
+        query = query + (
+            "\nIf you need more information, search information through below <documents> tag."
+            "\nYou should answer with Korean."
+            "\n<documents>"
+            "\n-"
+        ) + "\n -".join(documents) if len(documents) != 0 else query
 
     prompt = prompts.GEMMA_PROMPT.format(question=query)
     inputs = tokenizer(prompt, add_special_tokens=False, return_tensors="pt").to(model.device)
