@@ -1,10 +1,7 @@
----
-
----
-## Model Description
+## Model Description  
+[gemma-2b-it 모델](https://huggingface.co/google/gemma-2b-it)을 Instruction Tuning한 예제 모델입니다.  
+Instruction Tuning에 대해 쉽게 공부할 수 있도록 한글로된 예제 코드를 제공하고 있습니다.  
 **git hub** : [https://github.com/aiqwe/instruction-tuning-with-rag-example](https://github.com/aiqwe/instruction-tuning-with-rag-example)  
-github 예제에 따라 gemma-2b-it 모델을 Instruction Tuning한 예제 모델입니다.  
-Instruction Tuning에 대해 쉽게 공부할 수 있도록 한글로된 예제 코드를 제공하고 있습니다.
 
 ## Usage
 ### Inference on GPU example
@@ -63,9 +60,7 @@ model = AutoModelForCausalLM.from_pretrained(
 rag_config = {
     "api_client_id": userdata.get('NAVER_API_ID'),
     "api_client_secret": userdata.get('NAVER_API_SECRET')
-    }
-)
-
+}
 completion = generate(
     model=model,
     tokenizer=tokenizer,
@@ -92,9 +87,17 @@ Gemma 모델의 Chat Template을 사용합니다.
 | dtype         | bfloat16            |
 | Attention     | flash attention2    |
 | Tuning        | Lora(r=4, alpha=32) |
-| Learning Rate | 1e-4                |
+| Learning Rate | 5e-5                |
 | LRScheduler   | Cosine              |
 | Optimizer     | adamw_torch_fused   |
 
-## Github
+### Framework versions
+
+- PEFT 0.10.0
+- Transformers 4.40.1
+- Pytorch 2.2.1+cu121
+- Datasets 2.19.0
+- Tokenizers 0.19.1
+
+## Github Profile
 Github : https://github.com/aiqwe
