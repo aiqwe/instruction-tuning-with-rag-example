@@ -41,10 +41,3 @@ GEMMA_TRAINING_PROMPT = """<bos><start_of_turn>user
 <start_of_turn>model
 {answer}
 """
-
-# Gemma 기본 모델, Fine-tuned 모델에서 인퍼런스를 할때 사용하는 프롬프트
-GEMMA_PROMPT = """
-<bos><start_of_turn>user
-{question}<end_of_turn>
-<start_of_turn>model
-"""

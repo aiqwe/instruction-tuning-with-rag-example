@@ -82,8 +82,9 @@ Colab에서 A100은 자주 연결이 끊어지기 때문에 안정적인 L4 GPU�
 + [intfloat/e5-base-v2](https://huggingface.co/intfloat/e5-base-v2)
 + [Fine-Tuning Gemma Models in Hugging Face](https://huggingface.co/blog/gemma-peft)
 + [Openai API - Python](https://github.com/openai/openai-python)
++ [Openai Evals](https://github.com/openai/evals)
 + [Flash Attention](https://github.com/Dao-AILab/flash-attention)
-+ [네이버 API 가이드](https://developers.naver.com/docs/common/openapiguide/)  
++ [네이버 API 가이드](https://developers.naver.com/docs/common/openapiguide/)
 
 예제의 모델은 아래 링크를 참조해주세요.  
 + [https://huggingface.co/aiqwe/gemma-2b-it-sgtuned](https://huggingface.co/aiqwe/gemma-2b-it-sgtuned)

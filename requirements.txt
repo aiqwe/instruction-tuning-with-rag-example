@@ -7,3 +7,4 @@ peft==0.10.0
 trl==0.8.6
 transformers==4.40.1
 python-dotenv==1.0.1
+wandb==0.16.6

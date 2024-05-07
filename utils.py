@@ -246,14 +246,20 @@ def generate(
             "\n-"
         ) + "\n -".join(documents) if len(documents) != 0 else query
 
-    prompt = prompts.GEMMA_PROMPT.format(question=query)
-    inputs = tokenizer(prompt, add_special_tokens=False, return_tensors="pt").to(model.device)
+    inputs = tokenizer.apply_chat_template(
+        conversation=[
+            {"role": "user", "content": query}
+        ],
+        add_generate_prompt=True,
+        return_tensors="pt"
+    ).to(model.device)
+
     outputs = model.generate(
         **inputs,
         repetition_penalty=repetition_penalty,
         temperature=temperature,
         max_new_tokens=max_new_tokens
     )
-    completion = tokenizer.decode(outputs[0])
+    completion = tokenizer.decode(outputs[0], skip_special_tokens=True)
 
     return completion

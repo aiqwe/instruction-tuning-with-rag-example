@@ -91,13 +91,5 @@ Gemma 모델의 Chat Template을 사용합니다.
 | LRScheduler   | Cosine              |
 | Optimizer     | adamw_torch_fused   |
 
-### Framework versions
-
-- PEFT 0.10.0
-- Transformers 4.40.1
-- Pytorch 2.2.1+cu121
-- Datasets 2.19.0
-- Tokenizers 0.19.1
-
 ## Github Profile
 Github : https://github.com/aiqwe
