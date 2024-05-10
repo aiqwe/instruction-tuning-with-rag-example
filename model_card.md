@@ -75,8 +75,22 @@ print(completion)
 ## Chat Template
 Gemma 모델의 Chat Template을 사용합니다.  
 [gemma-2b-it Chat Template](https://huggingface.co/google/gemma-2b-it#chat-template)
+```python
+input_text = "아파트 재건축에 대해 알려줘."
 
-## Training Spec
+input_text = tokenizer.apply_chat_template(
+        conversation=[
+            {"role": "user", "content": input_text}
+        ],
+        add_generate_prompt=True,
+        return_tensors="pt"
+    ).to(model.device)
+
+outputs = model.generate(input_text, max_new_tokens=512, repetition_penalty = 1.5)
+print(tokenizer.decode(outputs[0], skip_special_tokens=False))
+```
+
+## Training information
 학습은 구글 코랩 L4 Single GPU를 활용하였습니다.  
 
 | 구분            | 내용                  |
@@ -90,6 +104,3 @@ Gemma 모델의 Chat Template을 사용합니다.
 | Learning Rate | 5e-5                |
 | LRScheduler   | Cosine              |
 | Optimizer     | adamw_torch_fused   |
-
-## Github Profile
-Github : https://github.com/aiqwe

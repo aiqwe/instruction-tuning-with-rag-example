@@ -255,7 +255,7 @@ def generate(
     ).to(model.device)
 
     outputs = model.generate(
-        **inputs,
+        inputs,
         repetition_penalty=repetition_penalty,
         temperature=temperature,
         max_new_tokens=max_new_tokens
