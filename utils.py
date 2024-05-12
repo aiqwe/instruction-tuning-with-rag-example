@@ -101,37 +101,71 @@ def get_completion(prompt: str, model="gpt-3.5-turbo", api_key: str = None) -> s
     return response.choices[0].message.content
 
 def get_document_through_selenium(
+        crawling_type:Literal['search, cafe'] = None,
         inputs:Union[List[str], str] = None,
         n_documents: int = 7,
+        n_page: int = 200,
         save_path:Union[bool, str] = None,
+        mode: Literal['w', 'a'] = 'a',
         indent: int = 4
 ) -> List[dict]:
     """ Selenium을 통하여 특정 메세지를 검색하고, 결과로 출력되는 네이버 인기글 텍스트 데이터를 수집합니다.
 
     Args:
+        type: selenium으로 수집할 타입
+          - popular_posts: 검색 인기글 수집
+          - cafe_posts: 네이버 부동산 스터디 카페글 수집
         inputs: 검색할 쿼리
-        n_documents: 수집할 인기글 데이터 갯수
+        n_documents: 네이버 인기글 검색시 검색어당 수집할 인기글 갯수
+        n_page: 네이버 부동산스터디 카페 글 수집시 수집할 페이지 갯수 (페이지당 50개 글 고정)
         save_path: 수집한 텍스트를 저장할 위치
+        mode: 파일 디스크립터 모드(w: 덮어쓰기, a: 추가하기)
         indent: json 저장시 indentation값
 
-    Returns: [{'question': 검색어, 'title': 인기글 제목, 'document': 인기글 요약 내용}]의 리스트 형태로 수집 데이터를 저장
+    Returns:
+        - 인기글: [{'question': 검색어, 'document': 인기글 요약 내용}]의 리스트 형태로 수집 데이터를 저장
+        - 부동산 카페 수집: [{'document': 게시물 질문 타이틀}]의 리스트 형태로 수집 데이터를 저장
 
     """
+    inner_func_mapping = {
+        'search': partial(_selenium_crawling_search, n_documents=n_documents),
+        'cafe': _selenium_crawling_cafe
+    }
 
-    if not inputs:
-        raise ValueError('You should pass "inputs" argument.')
-    if isinstance(inputs, str):
-        inputs = [inputs]
+    inner_func = inner_func_mapping.get(crawling_type, None)
+
+    if not inner_func:
+        raise ValueError('type should be one of ["search", "cafe"]')
+
+    # 인기글 수집시 병렬처리를 위해 설정해야하는 값
+    if crawling_type == 'search':
+        if not inputs:
+            raise ValueError('You should pass "inputs" argument.')
+        if isinstance(inputs, str):
+            inputs = [inputs]
+
+    # 카페글 수집시 병렬처리를 위해 설정해야 하는 값
+    if crawling_type == 'cafe':
+        inputs = [i+1 for i in range(n_page)]
 
     with Pool(cpu_count()) as pool:
-        search_data = list(tqdm(pool.imap(partial(_selenium_crawling, n_documents=n_documents), inputs)))
+        search_data = list(tqdm(pool.imap(inner_func, inputs)))
 
     if save_path:
-        jsave(search_data, save_path, indent=indent)
+        jsave(data=search_data, save_path=save_path, mode=mode, indent=indent)
 
     return search_data
 
-def _selenium_crawling(question, n_documents):
+def _selenium_crawling_search(question: str, n_documents: int) -> dict:
+    """네이버 검색에서 인기글 수집하는 selenium 조작 함수
+
+    Args:
+        question: 검색어
+        n_documents: 수집할 문서 갯수
+
+    Returns: {question: 검색어, document: 검색 문서}의 딕셔너리
+
+    """
     options = Options()
     options.add_argument('--headless')
     driver = webdriver.Chrome(options=options)
@@ -140,9 +174,6 @@ def _selenium_crawling(question, n_documents):
     driver.get(url)
     search = driver.find_element("id", "query")
 
-    search.send_keys(question)
-    search.send_keys(Keys.ENTER)
-
     # 인기글의 텍스트 내용
     dsc_link = driver.find_elements(By.CLASS_NAME, "dsc_link")
     document = [t.text for t in dsc_link]
@@ -150,6 +181,39 @@ def _selenium_crawling(question, n_documents):
     driver.close()
 
     return dict(question=question, document=document)
+
+def _selenium_crawling_cafe(n_page: int):
+    """ 부동산스터디 카페에서 회원간 묻고 답하기 크롤링하는 selenium 함수
+
+    Args:
+        n_page: 크롤링할 페이지 갯수
+
+    Returns:
+
+    """
+
+    options = Options()
+    options.add_argument('--headless')
+    driver = webdriver.Chrome(options=options)
+
+    userDisplay = 50 # 한 페이지에 보이는 게시글 갯수
+    url = (f'https://cafe.naver.com/jaegebal?iframe_url=/ArticleList.nhn%3Fsearch.clubid=12730407%26'
+           f'search.menuid=84%26'
+           f'userDisplay={userDisplay}%26'
+           f'search.boardtype=L%26'
+           f'search.specialmenutype=%26'
+           f'search.totalCount=1001%26'
+           f'search.cafeId=12730407%26'
+           f'search.page={n_page}')
+    driver.get(url)
+    driver.switch_to.frame('cafe_main')
+
+    # 해당 페이지의 질문 타이틀 가져오기
+    articles = driver.find_elements(By.CLASS_NAME, "article")
+    document = [document.text for document in articles]
+    driver.close()
+
+    return dict(document=document)
 
 def get_document_through_api(
         query: str,
