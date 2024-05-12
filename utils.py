@@ -35,12 +35,23 @@ def jload(file: str) -> List | str:
     with open(file, "r") as f:
         ext = file.split(".")[-1]
         if ext == "jsonl":
-            return list(f)
+            data = list(f)
+            result = []
+            for idx in range(len(data)):
+                try:
+                    decoded = json.loads(data[idx])
+                    result.append(decoded)
+                except:
+                    raise ValueError(
+                        f"Can't decode to json at index [{idx}].\n"
+                        "You should check whether json format is correct or not first."
+                    )
+            return result
         if ext == "json":
             return json.load(f)
 
 # JSON파일로 저장하기
-def jsave(data:Any, file: str, mode:Literal["a", "w"] = "a", indent: int=None) -> None:
+def jsave(data:Union[List[Any], Any], save_path: str, mode:Literal["a", "w"] = "a", indent: int=None) -> None:
     """ json 파일로 저장합니다.
 
     Args:
@@ -50,8 +61,15 @@ def jsave(data:Any, file: str, mode:Literal["a", "w"] = "a", indent: int=None) -
     Returns: None
 
     """
-    with open(file, mode) as f:
-        json.dump(obj=data, fp=f, ensure_ascii=False, indent=indent)
+    with open(save_path, mode) as f:
+        if save_path.endswith("jsonl"):
+            if indent:
+                raise ValueError("If you are trying to save in 'jsonl' format, you must not assign 'indent' argument.")
+            for d in data:
+                json.dump(obj=d, fp=f, ensure_ascii=False, indent=indent)
+                f.write("\n")
+        else:
+            json.dump(obj=data, fp=f, ensure_ascii=False, indent=indent)
 
 # OpenAI API 함수
 def get_completion(prompt: str, model="gpt-3.5-turbo", api_key: str = None) -> str:
