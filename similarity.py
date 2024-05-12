@@ -6,21 +6,49 @@ import transformers
 from multiprocessing import Pool, cpu_count
 from functools import partial
 
+def _infer_device() -> str:
+    """ device 자동설정 https://github.com/huggingface/peft/blob/6f41990da482dba96287da64a3c7d3c441e95e23/src/peft/utils/other.py#L75"""
+    if torch.cuda.is_available():
+        return "cuda"
+    elif hasattr(torch.backends, "mps") and torch.backends.mps.is_available():
+        return "mps"
+    elif mlu_available:
+        return "mlu"
+    elif is_xpu_available():
+        return "xpu"
+    elif is_npu_available():
+        return "npu"
+    return "cpu"
+
+def _call_default_model(device: str = None):
+    """ default 모델 호출 코드를 별도로 작성"""
+    if not device:
+        device =_infer_device()
+    model_id = "intfloat/multilingual-e5-small"
+    model = AutoModel.from_pretrained(model_id, device_map=device)
+    tokenizer = AutoTokenizer.from_pretrained(model_id)
+
+    return model, tokenizer
+
 def average_pool(
-        model: transformers.PreTrainedModel,
-        tokenizer: transformers.PreTrainedTokenizer,
-        input_text: Union[List[str], str]
+        input_text: Union[List[str], str],
+        model: transformers.PreTrainedModel = None,
+        tokenizer: transformers.PreTrainedTokenizer = None,
+        device: str = None
 ) -> torch.Tensor:
     """Input으로 받는 문장 내 여러 토큰들을 Average Pool을 사용해서 하나의 임베딩 값으로 변환해줍니다..
 
     Args:
-        model: 임베딩을 수행할 모델
-        tokenizer: 모델의 토크나이저
         input_text: 임베딩될 문장 또는 문장의 리스트
+        model: 임베딩을 수행할 모델 (default: intfloat/multilingual-e5-base)
+        tokenizer: 모델의 토크나이저 (default: intfloat/multilingual-e5-base)
+        device: 모델의 device 설정
 
     Returns: Average Pool된 임베딩 텐서
 
     """
+    if (not model) or (not tokenizer):
+        model, tokenizer = _call_default_model(device=device)
 
     inputs = tokenizer(
         input_text,
@@ -78,7 +106,9 @@ def sort_by_iterable(target: Iterable, key_iter: Iterable):
 def sort_by_similarity(
         query: str,
         documents: List[str],
-        device: str = "cpu"
+        model: transformers.PreTrainedModel = None,
+        tokenizer: transformers.PreTrainedTokenizer = None,
+        device: str = None
 ) -> List:
     """ query와 document의 코사인 유사도를 계산한 뒤, 높은 점수대로 document와 유사도를 반환하는 함수입니다.
 
@@ -89,16 +119,11 @@ def sort_by_similarity(
     Returns: 코사인 유사도가 높은 순서대로 document 반환
 
     """
+    if (not model) or (not tokenizer):
+        model, tokenizer = _call_default_model(device=device)
 
-    from transformers import AutoTokenizer, AutoModel
-
-    model_id = "intfloat/e5-base-v2"
-    model_device = device
-    tokenizer = AutoTokenizer.from_pretrained(model_id)
-    model = AutoModel.from_pretrained(model_id, device_map=model_device)
-
-    x1 = average_pool(model, tokenizer, query)
-    x2 = average_pool(model, tokenizer, documents)
+    x1 = average_pool(model=model, tokenizer=tokenizer, device=device, input_text=query)
+    x2 = average_pool(model=model, tokenizer=tokenizer, device=device, input_text=documents)
 
     scores = cosine_similarity(x1, x2)
     documents, scores = sort_by_iterable(target=documents, key_iter=scores)

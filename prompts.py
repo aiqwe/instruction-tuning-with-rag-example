@@ -19,6 +19,25 @@ seed_word는 다음과 같습니다:
 # seed_words.txt에서 질문리스트를 만들때 사용하는 본문 프롬프트
 SEED_WORD_PROMPT_CONTENT = "{seed_word}"
 
+# 카페 게시글 필터링 프롬프트
+CAFE_FILTER_PROMPT = """아래 documents들중 다음 규칙을 적용하여 답변하세요.
+seed_words와 documents는 리스트 형태로 주어집니다.
+요구사항은 다음과 같습니다:
+1. 정치적 발언, 혐오 발언 등 독성있고 해로운 documents는 삭제하세요.
+2. 리스트 안에 문자열 형태로 주어진 seed_words들과 관련이 있는 데이터만 출력하세요.
+3. 출력한 데이터는 JSON형식을 따라야하고, indent는 없어야 합니다.
+4. 아래 양식으로 출력하세요.
+["document1", "document2", "document3" ...]  
+
+###seed_words:
+{seed_words}
+
+###documents:
+{documents}
+
+"""
+
+
 # Training Set을 만들때 사용하는 접두어 프롬프트
 INSTRUCTION_PROMPT_PREFIX = """요청받은 question을 document를 참조하여 answer로 답변하세요.
 question 1개당 여러개의 document가 주어지며, question은 10개씩 전달됩니다.

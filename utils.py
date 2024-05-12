@@ -113,8 +113,8 @@ def get_document_through_selenium(
 
     Args:
         type: selenium으로 수집할 타입
-          - popular_posts: 검색 인기글 수집
-          - cafe_posts: 네이버 부동산 스터디 카페글 수집
+          - search: 검색 인기글 수집
+          - cafe: 네이버 부동산 스터디 카페글 수집
         inputs: 검색할 쿼리
         n_documents: 네이버 인기글 검색시 검색어당 수집할 인기글 갯수
         n_page: 네이버 부동산스터디 카페 글 수집시 수집할 페이지 갯수 (페이지당 50개 글 고정)
