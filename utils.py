@@ -103,6 +103,7 @@ def get_completion(prompt: str, model="gpt-3.5-turbo", api_key: str = None) -> s
 def get_document_through_selenium(
         crawling_type:Literal['search, cafe'] = None,
         inputs:Union[List[str], str] = None,
+        n_worker: int = cpu_count(),
         n_documents: int = 7,
         n_page: int = 200,
         save_path:Union[bool, str] = None,
@@ -116,6 +117,7 @@ def get_document_through_selenium(
           - search: 검색 인기글 수집
           - cafe: 네이버 부동산 스터디 카페글 수집
         inputs: 검색할 쿼리
+        n_worker: 크롤링을 병렬처리할 worker의 수 (default 코어 갯수)
         n_documents: 네이버 인기글 검색시 검색어당 수집할 인기글 갯수
         n_page: 네이버 부동산스터디 카페 글 수집시 수집할 페이지 갯수 (페이지당 50개 글 고정)
         save_path: 수집한 텍스트를 저장할 위치
@@ -148,7 +150,7 @@ def get_document_through_selenium(
     if crawling_type == 'cafe':
         inputs = [i+1 for i in range(n_page)]
 
-    with Pool(cpu_count()) as pool:
+    with Pool(n_worker) as pool:
         search_data = list(tqdm(pool.imap(inner_func, inputs)))
 
     if save_path:
@@ -172,7 +174,10 @@ def _selenium_crawling_search(question: str, n_documents: int) -> dict:
 
     url = 'https://www.naver.com'
     driver.get(url)
+
     search = driver.find_element("id", "query")
+    search.send_keys(question)
+    search.send_keys(Keys.ENTER)
 
     # 인기글의 텍스트 내용
     dsc_link = driver.find_elements(By.CLASS_NAME, "dsc_link")
@@ -318,9 +323,14 @@ def generate(
             search_docs = [content['description'] for content in search_docs['items']]
             search_docs = [docs.replace("<b>", "").replace("</b>", "") for docs in search_docs]
             if not len(search_docs) == 0:
-                search_docs, scores = similarity.sort_by_similarity(query, search_docs)
-                search_docs = [d for d, s in zip(search_docs, scores) if s >= 0.9]  # Cosine Similarity가 0.9 이상인 문서만 수집
+                search_docs, scores = similarity.sort_by_similarity(
+                    query=query,
+                    documents=search_docs,
+                    threshold_score=0.9
+                )
             documents = documents + search_docs
+
+        # 프롬프트로 검색 결과 문서를 추가
         query = query + (
             "\nIf you need more information, search information through below <documents> tag."
             "\nYou should answer with Korean."

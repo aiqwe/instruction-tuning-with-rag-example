@@ -66,19 +66,21 @@ def average_pool(
 
 def cosine_similarity(
         input1: torch.Tensor,
-        input2: Union[List[torch.Tensor], torch.Tensor]
+        input2: Union[List[torch.Tensor], torch.Tensor],
+        n_workers: int = cpu_count() - 2
 ) -> List:
     """input1과 input2의 코사인 유사도를 계산합니다.
 
     Args:
         input1: 코사인 유사도를 계산할 텐서값
         input2: input1과 코사인 유사도를 계산할 텐서 또는 텐서 리스트
+        n_workers: 병렬처리시 작업할 워커의 숫자 (default: cpu_count() - 2)
 
     Returns: 코사인 유사도 값 리스트
 
     """
     if isinstance(input2, list):
-        with Pool(cpu_count()) as p:
+        with Pool(n_workers) as p:
             scores = p.map(partial(F.cosine_similarity, x1=input1), input2)
     else:
         scores = F.cosine_similarity(x1=input1, x2=input2)
@@ -106,6 +108,8 @@ def sort_by_iterable(target: Iterable, key_iter: Iterable):
 def sort_by_similarity(
         query: str,
         documents: List[str],
+        threshold_score: float = None,
+        n_workers: int = cpu_count() - 2,
         model: transformers.PreTrainedModel = None,
         tokenizer: transformers.PreTrainedTokenizer = None,
         device: str = None
@@ -115,6 +119,11 @@ def sort_by_similarity(
     Args:
         query: 코사인 유사도로 계산할 쿼리
         documents: 코사인 유사도로 계산할 document
+        threshold_score: 값이 주어지면 해당 값 이상의 값만 필터링
+        n_workers: 병렬처리시 작업할 워커의 숫자 (default: cpu_count() - 2)
+        model: 유사도 계산시 사용할 모델 (default: multilingual e5 base)
+        tokenizer: 유사도 계산시 사용할 모델의 토크나이저
+        device: 사용할 디바이스 값 cpu, mps, ... 값이 전달되지 않으면 자동으로 설정
 
     Returns: 코사인 유사도가 높은 순서대로 document 반환
 
@@ -125,7 +134,11 @@ def sort_by_similarity(
     x1 = average_pool(model=model, tokenizer=tokenizer, device=device, input_text=query)
     x2 = average_pool(model=model, tokenizer=tokenizer, device=device, input_text=documents)
 
-    scores = cosine_similarity(x1, x2)
+    scores = cosine_similarity(input1=x1, input2=x2, n_workers=n_workers)
     documents, scores = sort_by_iterable(target=documents, key_iter=scores)
+
+    if threshold_score:
+        documents = [d for d, s in zip(documents, scores) if s >= threshold_score]
+        scores = [s for d, s in zip(documents, scores) if s >= threshold_score]
 
     return documents, scores
