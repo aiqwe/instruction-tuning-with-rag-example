@@ -1,7 +1,8 @@
 ## Model Description  
-[gemma-2b-it 모델](https://huggingface.co/google/gemma-2b-it)을 Instruction Tuning한 예제 모델입니다.  
-Instruction Tuning에 대해 쉽게 공부할 수 있도록 한글로된 예제 코드를 제공하고 있습니다.  
 **git hub** : [https://github.com/aiqwe/instruction-tuning-with-rag-example](https://github.com/aiqwe/instruction-tuning-with-rag-example)  
+Instruction Tuning의 학습을 위해 예시로 학습한 모델입니다.  
+[gemma-2b-it](https://huggingface.co/google/gemma-2b-it) 모델을 기반으로 약 1만개의 부동산 관련 Instruction 데이터셋을 학습하였습니다.  
+학습 코드는 위 git hub를 참조해주세요.  
 
 ## Usage
 ### Inference on GPU example
