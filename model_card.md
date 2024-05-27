@@ -93,14 +93,16 @@ print(tokenizer.decode(outputs[0], skip_special_tokens=False))
 ## Training information
 학습은 구글 코랩 L4 Single GPU를 활용하였습니다.  
 
-| 구분            | 내용                  |
-|---------------|---------------------|
-| 학습 환경         | Google Colab        |
-| GPU           | L4(22.5GB)          |
-| 학습시 VRAM      | 약 17GB 사용           |
-| dtype         | bfloat16            |
-| Attention     | flash attention2    |
-| Tuning        | Lora(r=4, alpha=32) |
-| Learning Rate | 5e-5                |
-| LRScheduler   | Cosine              |
-| Optimizer     | adamw_torch_fused   |
+| 구분                          | 내용               |
+|-----------------------------|------------------|
+| 환경                          | Google Colab     |
+| GPU                         | L4(22.5GB)       |
+| 사용 VRAM                     | 약 13.8GB         |
+| dtype                       | bfloat16         |
+| Attention                   | flash attention2 |
+| Tuning                      | Lora(r=4, alpha=32) |
+| Learning Rate               | 1e-4             |
+| LRScheduler                 | Cosine           |
+| Optimizer                   | adamw_torch_fused |
+| batch_size                  | 4                |
+| gradient_accumulation_steps | 2                |
