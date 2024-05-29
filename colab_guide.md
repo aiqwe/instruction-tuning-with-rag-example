@@ -1,36 +1,43 @@
 # Colab 실행 가이드
-GPU 사용을 위해 Colab에서 실행해보겠습니다.
+GPU 사용을 위해 Colab에서 실행해보겠습니다.  
+아래 방법으로 손쉽게 소스코드들을 Colab에서 쉽게 열 수 있습니다.
 
 ---
-1. google Colab에 접속하기  
-[https://colab.google//](https://colab.google//)  
+### 1. google Colab에서 새 노트북 열기
+![](assets/01_new_colab.png)
+Colab : [https://colab.google](https://colab.google//)  
 Colab에서 새 노트를 작성합니다.  
 
-2. google Drive 마운트하기
-현재 생성한 Colab 노트북은 임시 파일입니다. 드라이브에 마운트하여 파일을 저장할 수 있도록 해보겠습니다.  
-![](assets/colab_drive_mount.png)
+### 2. Google Drive 연결하기
+![](assets/02_googledrive_mount1.png)  
+현재 Colab 노트북은 임시 파일입니다. 드라이브에 마운트하여 파일을 저장할 수 있도록 해보겠습니다.    
+왼쪽 네비게이션 바에서 구글드라이브 연결 아이콘을 클릭하고 안내에 따라 연결합니다.    
+![](assets/03_googledrive_mount2.png)  
+구글 드라이브가 연결되면 왼쪽에 폴더들이 생겨납니다.  
+구글 드라이브는 `/content/drive/MyDrive`로 연결됩니다.  
 
+### 3. Github Clone  
+![](assets/04_gitclone1.png)  
+[instuction-tuning-with-rag-example](https://github.com/aiqwe/instruction-tuning-with-rag-example.git) 레포지토리에서 주소를 복사합니다.
+github의 https 주소를 복사합니다.  
 
-2. github의 레포를 clone하기  
-![process](assets/colab1_resize.png)  
-github의 https 주소를 복사한뒤, colab에서 실행합니다.  
+![](assets/05_gitclone2.png)
+노트북에서 `!git clone` 명령어와 함께 복사했던 github 주소와 함께 소스코드를 복사할 위치를 함께 입력합니다.  
 
+![](assets/06_gitclone3.png)
+아래와 같이 입력하면 구글드라이브에 `instruction-tuning-with-rage-example`이라는 폴더가 생기면서 소스코드가 해당 위치에 복사됩니다.
 ```
-!git clone https://github.com/aiqwe/instruction-tuning-with-rag-example.git
+!git clone https://github.com/aiqwe/instruction-tuning-with-rag-example.git /content/drive/MyDrive
 ```
 
-<br>
-<br>
-
-2. 구글 드라이브에 코드 업로드하고 코랩 실행하기  
-![process](assets/colab2_resize.png)  
-구글 드라이브에 코드 파일을 업로드하고, Jupyter Notebook 파일을 Colab과 연결하여 실행시킵니다.  
-위 사진처럼 `train.ipynb` 파일을 마우스 우클릭하고 Google Colaboratory로 실행시킵니다.  
+### 4. 소스코드 Colab 노트북에서 실행하기  
+![](assets/07_open_colab.png)
+복사한 소스코드에서 `train.ipynb`을 우클릭하고 Google Colab에서 실행할 수 있습니다.
 
 <br>
 <br>
   
-3. Colab에서 Secret, GPU 설정하기  
+### etc. Colab에서 Secret, GPU 설정하기  
 ![process](assets/colab3_resize.png)  
 왼쪽 세로 네게이션 바를 보면 위 사진과 같이 열쇠 그림이 있습니다. 여기서 Secret을 설정할 수 있습니다.  
 사진처럼 오른쪽 상단 빨간색 박스 안에는 사용하고 있는 GPU가 표시됩니다. 여기서 L4 또는 A100을 사용합니다.  
