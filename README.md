@@ -16,9 +16,10 @@
 3. 학습한 모델을 [LLM으로 평가](https://arxiv.org/pdf/2306.05685)합니다.
 
 코드의 구성은 다음과 같습니다.  
+
+![](assets/code_tree.png)
 + `utils.py`, `similarity.py`, `prompts.py`를 커스텀 모듈로 `import`하여 사용합니다.
-+ 데이터 생성과 학습은 주피터 노트북으로 실행합니다.
-![process](assets/process_resize.png)  
++ 데이터 생성과 학습, 평가는 주피터 노트북으로 실행합니다. 
 
 [preprocess.ipynb](preprocess.ipynb)  
 데이터를 전처리하는 과정을 담았습니다. 데이터 생성은 gpt-4-turbo와 gpt-4o API를 사용하였습니다.  

@@ -305,16 +305,19 @@ def generate(
           - api_client_secret: 네이버 검색 API의 SECRET
           - score: 검색 결과를 필터링할 유사도 점수 기준값
 
-    Returns: 모델이 답변하는 텍스트
+    Returns: input과 output을 나눈 key-value dict 객체
+    result = {"inputs": "전세사기 대처하는 방법...", "outputs": "전세사기를 대처하려 할 때 다양한 방식들이..."}
 
     """
 
     if (rag and not rag_config):
         raise ValueError(
-            "If you want to use RAG, pass 'rag_config' with 'api_client_id' and 'api_client_secret'"
-            "example)"
-            "rag_config={'api_client_id'}: 'your_client_id', 'api_client_scret': 'your_client_secret'"
+            "If you want to use RAG, pass 'rag_config' with 'api_client_id' and 'api_client_secret'\n"
+            "example)\n"
+            "rag_config={'api_client_id'}: 'your_client_id', 'api_client_scret': 'your_client_secret'\n"
         )
+
+    # 네이버 검색 API 사용하여 RAG 수행
     if (rag and rag_config):
         categories = ["blog", "news", "kin", "encyc", "cafearticle", "webkr"]
         documents = []
@@ -322,6 +325,8 @@ def generate(
             search_docs = get_document_through_api(query, category=category, **rag_config)
             search_docs = [content['description'] for content in search_docs['items']]
             search_docs = [docs.replace("<b>", "").replace("</b>", "") for docs in search_docs]
+
+            # 검색 API가 1개라도 발견되면 질문 query와 유사도를 계산하여 0.9 이상만 필터링
             if not len(search_docs) == 0:
                 search_docs, scores = similarity.sort_by_similarity(
                     query=query,
@@ -330,7 +335,7 @@ def generate(
                 )
             documents = documents + search_docs
 
-        # 프롬프트로 검색 결과 문서를 추가
+        # 프롬프트에 필터링한 검색 결과 문서를 추가
         query = query + (
             "\nIf you need more information, search information through below <documents> tag."
             "\nYou should answer with Korean."
@@ -342,7 +347,7 @@ def generate(
         conversation=[
             {"role": "user", "content": query}
         ],
-        add_generate_prompt=True,
+        add_generation_prompt=True,
         return_tensors="pt"
     ).to(model.device)
 
@@ -353,5 +358,6 @@ def generate(
         max_new_tokens=max_new_tokens
     )
     completion = tokenizer.decode(outputs[0], skip_special_tokens=True)
-
-    return completion
+    inputs, outputs = completion.split("model\n")
+    result = {"inputs": inputs.split("user\n")[1], "outputs": outputs}
+    return result

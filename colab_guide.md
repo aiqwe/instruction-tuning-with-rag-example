@@ -37,21 +37,16 @@ github의 https 주소를 복사합니다.
 <br>
 <br>
   
-### etc. Colab에서 Secret, GPU 설정하기  
-![process](assets/colab3_resize.png)  
-왼쪽 세로 네게이션 바를 보면 위 사진과 같이 열쇠 그림이 있습니다. 여기서 Secret을 설정할 수 있습니다.  
-사진처럼 오른쪽 상단 빨간색 박스 안에는 사용하고 있는 GPU가 표시됩니다. 여기서 L4 또는 A100을 사용합니다.  
+### etc. Colab에서 Secret 설정하기
+![](assets/etc_secret.png)
+왼쪽 세로 네게이션 바를 보면 위 그림과 같이 열쇠 그림이 있습니다. 여기서 Secret을 설정할 수 있습니다.  
+Secret은 `google.colab.userdata.get()`를 통해 Key-Value(`dict` 타입같이)로 접근할 수 있습니다.
++ 노트북액세스 : Colab에서 접근 허용 여부입니다. 토글을 밀어서 ON으로 세팅합니다.
++ 이름 : Secret의 Key값입니다.
++ 값 : Secret의 Value입니다.
+사진처럼 오른쪽 상단 빨간색 박스 안에는 사용하고 있는 GPU가 표시됩니다. 여기서 L4를 사용합니다. 
 예제 코드는 `torch.bfloat16` 타입을 사용하기 때문에 Ampere 7 이전의 GPU에서는 지원되지 않습니다.  
-+ Secret을 설정하는 방법은 [여기](https://medium.com/@parthdasawant/how-to-use-secrets-in-google-colab-450c38e3ec75)를 참조해 주세요.
-+ `utils.py`의 함수들은 아래처럼 `.env` 파일을 만들면 자동으로 환경변수를 읽습니다.(또는 시스템 환경변수를 읽습니다.)
-```bash
-# .env 파일
-OPENAI_API_KEY=발급받은KEY
-```
-+ `train.ipynb` 파일의 huggingface토큰은 함수 인자에 직접 입력하거나 Colab Secret을 활용해주세요.(Colab을 가정하기 때문에 환경변수로 읽지 않습니다.)
-
-<br>
-<br>
+Secret을 설정하는 방법은 [여기](https://medium.com/@parthdasawant/how-to-use-secrets-in-google-colab-450c38e3ec75)를 참조해 주세요.
 
 5. `import`를 위한 `path` 지정하기  
 ![process](assets/colab4_resize.png)  
