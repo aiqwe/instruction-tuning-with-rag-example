@@ -7,10 +7,11 @@ Instruction Tuning의 학습을 위해 예시로 학습한 모델입니다.
 ## Usage
 ### Inference on GPU example
 ```python
-from transformers import AutoTokenizer, AutoModelForCausalLM
+from transformers import AutoTokenizer
+from peft import AutoPeftModelForCausalLM
 
 tokenizer = AutoTokenizer.from_pretrained("google/gemma-2b-it")
-model = AutoModelForCausalLM.from_pretrained(
+model = AutoPeftModelForCausalLM.from_pretrained(
     "aiqwe/gemma-2b-it-example-v1",
     device_map="cuda",
     torch_dtype=torch.bfloat16,
@@ -31,7 +32,7 @@ print(tokenizer.decode(outputs[0]))
 from transformers import AutoTokenizer, AutoModelForCausalLM
 
 tokenizer = AutoTokenizer.from_pretrained("google/gemma-2b-it")
-model = AutoModelForCausalLM.from_pretrained(
+model = AutoPeftModelForCausalLM.from_pretrained(
     "aiqwe/gemma-2b-it-example-v1",
     device_map="cpu",
     torch_dtype=torch.bfloat16
@@ -51,7 +52,7 @@ from transformers import AutoTokenizer, AutoModelForCausalLM
 from utils import generate
 
 tokenizer = AutoTokenizer.from_pretrained("google/gemma-2b-it")
-model = AutoModelForCausalLM.from_pretrained(
+model = AutoPeftModelForCausalLM.from_pretrained(
     "aiqwe/gemma-2b-it-example-v1",
     device_map="cuda",
     torch_dtype=torch.bfloat16,

@@ -48,15 +48,13 @@ Secret은 `google.colab.userdata.get()`를 통해 Key-Value(`dict` 타입같이)
 예제 코드는 `torch.bfloat16` 타입을 사용하기 때문에 Ampere 7 이전의 GPU에서는 지원되지 않습니다.  
 Secret을 설정하는 방법은 [여기](https://medium.com/@parthdasawant/how-to-use-secrets-in-google-colab-450c38e3ec75)를 참조해 주세요.
 
-5. `import`를 위한 `path` 지정하기  
-![process](assets/colab4_resize.png)  
-다시 왼쪽 세로 네게이션 바를 보면 위 사진과 같이 폴더 그림이 있습니다. 여기서 연결된 구글 드라이브로 탐색할 수 있습니다.  
-`drive.mount('/content/drive')` 코드로 구글 드라이브를 연결하면 위 사진처럼 드라이브의 폴더들이 보입니다.  
-`utils.py`, `prompts.py`, `similarity.py` 모듈을 `import`하기 위해 위 사진처럼 `sys.path`에 추가합니다.
-
-<br>
-<br>
-
+### etc. import를 위한 path 지정
+`utils.py`, `prompts.py`, `similarity.py` 모듈을 `import`하기 위해 해당 파이썬들이 위치한 폴더를 `sys.path.append`로 추가해야합니다.  
+`drive.mount('/content/drive')` 로 구글 드라이브를 연결하고, `git clone`한 위치를 추가합니다.  
+```python
+sys.path.append("/content/drive/MyDrive/instruction-tuning-with-rag-example")
+```
+### etc. 허깅페이스 토큰
 + `train.ipynb` 에서 huggingface 토큰을 지정해야합니다.  
 Gemma 모델을 로드하기 위해서는 huggingface의 gemma 모델 사용 신청을 하고, huggingface 토큰을 발급받아야 합니다.  
 토큰 발급은 huggingface의 [User Access Tokens](https://huggingface.co/docs/hub/security-tokens)를 참조하세요.  
