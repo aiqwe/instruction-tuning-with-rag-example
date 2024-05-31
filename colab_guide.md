@@ -11,7 +11,8 @@ Colab에서 새 노트를 작성합니다.
 ### 2. Google Drive 연결하기
 ![](assets/02_googledrive_mount1.png)  
 현재 Colab 노트북은 임시 파일입니다. 드라이브에 마운트하여 파일을 저장할 수 있도록 해보겠습니다.    
-왼쪽 네비게이션 바에서 구글드라이브 연결 아이콘을 클릭하고 안내에 따라 연결합니다.    
+왼쪽 네비게이션 바에서 구글드라이브 연결 아이콘을 클릭하고 안내에 따라 연결합니다.  
+(세션이 연결되야 네비게이션 바가 나타납니다.)  
 ![](assets/03_googledrive_mount2.png)  
 구글 드라이브가 연결되면 왼쪽에 폴더들이 생겨납니다.  
 구글 드라이브는 `/content/drive/MyDrive`로 연결됩니다.  
@@ -27,7 +28,7 @@ github의 https 주소를 복사합니다.
 ![](assets/06_gitclone3.png)
 아래와 같이 입력하면 구글드라이브에 `instruction-tuning-with-rage-example`이라는 폴더가 생기면서 소스코드가 해당 위치에 복사됩니다.
 ```
-!git clone https://github.com/aiqwe/instruction-tuning-with-rag-example.git /content/drive/MyDrive
+!git clone https://github.com/aiqwe/instruction-tuning-with-rag-example.git /content/drive/MyDrive/instruction-tuning-with-rag-example
 ```
 
 ### 4. 소스코드 Colab 노트북에서 실행하기  

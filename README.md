@@ -28,13 +28,16 @@
 
 [preprocess.ipynb](preprocess.ipynb)  
 데이터를 전처리하는 과정을 담았습니다. 데이터 생성은 gpt-4-turbo와 gpt-4o API를 사용하였습니다.  
-(데이터를 개선시키는 막바지에 gpt-4o가 출시되어 원가 절감에 큰 도움이 되었습니다 😆)
+(데이터를 개선시키는 막바지에 gpt-4o가 출시되어 원가 절감에 큰 도움이 되었습니다 😆)  
+`preprocess.ipynb` 코드는 **로컬**에서 실행할 수 있게 작성되었습니다.(Colab에서는 별도의 설정으로 사용해야합니다.)  
 
 [train.ipynb](train.ipynb)  
-`Dataset` 생성 등 데이터 준비과정과 LoRA학습등 Training코드가 담겨 있습니다.
+`Dataset` 생성 등 데이터 준비과정과 LoRA학습등 Training코드가 담겨 있습니다.  
+`train.ipynb` 코드는 **Google Colab**에서 실행될 수 있게 작성되었습니다.  
 
 [evaluation.ipynb](evaluation.ipynb)  
 LLM으로 부터 Evaluation을 받는 코드가 담겨 있습니다.
+`evaluation.ipynb` 코드는 **Google Colab**에서 실행될 수 있게 작성되었습니다.  
 
 # 훈련 스펙
 학습은 쉽게 실험해 볼 수 있도록 [Google Colab](https://colab.google/)을 사용했으며, 예제 모델의 훈련시 스펙은 아래와 같습니다.
