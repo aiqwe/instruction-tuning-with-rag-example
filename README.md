@@ -26,16 +26,16 @@
 + `utils.py`, `similarity.py`, `prompts.py`를 커스텀 모듈로 `import`하여 사용합니다.
 + 데이터 생성과 학습, 평가는 주피터 노트북으로 실행합니다. 
 
-[preprocess.ipynb](preprocess.ipynb)  
+[preprocess.ipynb](01_preprocess.ipynb)  
 데이터를 전처리하는 과정을 담았습니다. 데이터 생성은 gpt-4-turbo와 gpt-4o API를 사용하였습니다.  
 (데이터를 개선시키는 막바지에 gpt-4o가 출시되어 원가 절감에 큰 도움이 되었습니다 😆)  
 `preprocess.ipynb` 코드는 **로컬**에서 실행할 수 있게 작성되었습니다.(Colab에서는 별도의 설정으로 사용해야합니다.)  
 
-[train.ipynb](train.ipynb)  
+[train.ipynb](02_train.ipynb)  
 `Dataset` 생성 등 데이터 준비과정과 LoRA학습등 Training코드가 담겨 있습니다.  
 `train.ipynb` 코드는 **Google Colab**에서 실행될 수 있게 작성되었습니다.  
 
-[evaluation.ipynb](evaluation.ipynb)  
+[evaluation.ipynb](03_evaluation.ipynb)  
 LLM으로 부터 Evaluation을 받는 코드가 담겨 있습니다.
 `evaluation.ipynb` 코드는 **Google Colab**에서 실행될 수 있게 작성되었습니다.  
 
@@ -73,11 +73,12 @@ Colab에서 실행하기위해 [colab_guide.md](colab_guide.md)를 참조해주�
 + [wandb](https://kr.wandb.ai/)
 + [Generative AI with LLMs](https://www.deeplearning.ai/courses/generative-ai-with-llms/)
 + [입문자를 위한 병렬프로그래밍](https://product.kyobobook.co.kr/detail/S000001875036)
++ [lm-evaluation-harness](https://github.com/EleutherAI/lm-evaluation-harness)
 
 ### 논문
 + [Gemma: Open Models Based on Gemini Research and Technology](https://arxiv.org/pdf/2403.08295)
 + [Self-Instruct: Aligning Language Models with Self-Generated Instructions](https://arxiv.org/pdf/2212.10560)
 + [Judging LLM-as-a-Judge with MT-Bench and Chatbot Arena](https://arxiv.org/pdf/2306.05685)
 + [LoRA: Low-Rank Adaptation of Large Language Models](https://arxiv.org/pdf/2106.09685)
-
++ [Efficient Memory Management for Large Language Model Serving with PagedAttention](https://arxiv.org/pdf/2309.06180)
 
